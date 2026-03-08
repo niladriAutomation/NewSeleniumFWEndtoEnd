@@ -20,10 +20,23 @@ phases:
 
       - echo "Uploading reports if present"
 
-      - if [ -d "latest-report" ]; then
-        aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive;
+      - |
+        if [ -d "latest-report" ]; then
+          aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive
         fi
 
-      - if [ -d "reports" ]; then
-        aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive;
+      - |
+        if [ -d "reports" ]; then
+          aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive
         fi
+
+      - echo "Triggering Lambda Email Notification"
+
+      - aws lambda invoke \
+        --function-name send-automation-report \
+        --region us-east-1 \
+        output.json
+
+artifacts:
+  files:
+    - '**/*'
