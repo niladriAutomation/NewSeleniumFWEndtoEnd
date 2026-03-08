@@ -4,6 +4,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -18,14 +19,43 @@ public class BaseTest {
     public LandingPage lp;
 
 
-    public WebDriver initializeDriver () throws IOException {
+
+    public WebDriver initializeDriver() throws IOException {
+
         Properties prop = new Properties();
-        FileInputStream file = new FileInputStream(System.getProperty("user.dir")+"//Global.properties");
+
+        FileInputStream file = new FileInputStream(
+                System.getProperty("user.dir") + "/Global.properties"
+        );
+
         prop.load(file);
+
         String browsername = prop.getProperty("browser");
-        if (browsername.equalsIgnoreCase("chrome"))driver = new ChromeDriver();
+        String headlessFlag = prop.getProperty("headless");
+
+        if (browsername.equalsIgnoreCase("chrome")) {
+
+            ChromeOptions options = new ChromeOptions();
+
+            // ⭐ Run headless only when property is true
+            if (headlessFlag.equalsIgnoreCase("true")) {
+
+                options.addArguments("--headless=new");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+
+                System.out.println("Running Chrome in HEADLESS mode (CI/AWS)");
+            } else {
+
+                System.out.println("Running Chrome in NORMAL mode (Local)");
+            }
+
+            driver = new ChromeDriver(options);
+        }
+
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
         return driver;
     }
     public static String getScreenshot(String testName, WebDriver driver)
@@ -63,7 +93,7 @@ public class BaseTest {
     }
     @AfterMethod
     public void tearDown(){
-        driver.close();
+        driver.quit();
     }
 
 }

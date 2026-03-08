@@ -7,6 +7,9 @@ import org.openqa.selenium.WebDriver;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -56,6 +59,32 @@ public class ExtentReporterNG {
     }
     public static String getReportPath() {
         return reportPath;
+    }
+    /* ===================== Copy latest Report ===================== */
+    public static void copyLatestReportForPipeline() {
+
+        try {
+
+            File source = new File(getReportPath() + "/index.html");
+
+            File destination = new File(
+                    System.getProperty("user.dir")
+                            + "/latest-report/index.html"
+            );
+
+            destination.getParentFile().mkdirs();
+
+            Files.copy(
+                    source.toPath(),
+                    destination.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+            System.out.println("Latest report copied for CI pipeline");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /* ===================== STEP LOGGER ===================== */

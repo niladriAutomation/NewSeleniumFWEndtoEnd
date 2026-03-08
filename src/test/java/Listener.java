@@ -69,6 +69,7 @@ public class Listener implements ITestListener {
     @Override
     public void onFinish(ITestContext context) {
         ExtentReporterNG.getReportObject().flush();
+        ExtentReporterNG.copyLatestReportForPipeline();
 
     }
 
