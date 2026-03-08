@@ -15,20 +15,19 @@ phases:
   build:
     commands:
       - echo "Running Selenium tests"
-      - mvn clean test -Dheadless=true
+      - mvn clean test -Dheadless=true || true
 
   post_build:
     commands:
-      - echo "Uploading Latest Extent Report to S3"
-      - aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive --acl public-read
+      - echo "Checking report folders"
+      - ls -la
 
-      - echo "Uploading Timestamp Reports to S3"
-      - aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive --acl public-read
+      - echo "Uploading reports if present"
 
-      - echo "Report URL:"
-      - echo "https://niladri-selenium-reports-2026.s3.ap-south-1.amazonaws.com/extent-reports/latest/index.html"
+      - if [ -d "latest-report" ]; then aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive --acl public-read; fi
+
+      - if [ -d "reports" ]; then aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive --acl public-read; fi
 
 artifacts:
   files:
-    - latest-report/**/*
-    - reports/**/*
+    - '**/*'

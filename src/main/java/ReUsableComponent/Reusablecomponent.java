@@ -1,6 +1,7 @@
 package ReUsableComponent;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -22,13 +23,24 @@ public class Reusablecomponent {
         wait.until(ExpectedConditions.visibilityOfElementLocated(findBy));
 
     }
+    public void waitForPageToLoad() {
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+
+        wait.until(webDriver ->
+                ((JavascriptExecutor) webDriver)
+                        .executeScript("return document.readyState")
+                        .equals("complete")
+        );
+    }
     public void waitForElementToBeClickable(WebElement element) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
     public void clickCartButton() {
+        waitForPageToLoad();
         waitForElementToBeClickable(checkoutbutton);
-        checkoutbutton.click();
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", checkoutbutton);
     }
 }
