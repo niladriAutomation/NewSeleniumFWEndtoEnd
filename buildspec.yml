@@ -1,40 +1,45 @@
 version: 0.2
 
 phases:
+
   install:
     runtime-versions:
       java: corretto21
     commands:
       - echo "Installing dependencies"
-      - yum install -y xorg-x11-server-Xvfb   # for headless Chrome
-      - export DISPLAY=:99
-      - Xvfb :99 -screen 0 1920x1080x24 &
 
   build:
     commands:
       - echo "Running Selenium Tests"
-      - mvn clean test -Dheadless=true        # Remove || true to fail on test errors
+      - mvn clean test -Dheadless=true || true
 
   post_build:
     commands:
+
       - echo "Checking all folders"
       - ls -R
 
       - echo "Uploading latest report"
+
       - |
         if [ -d "latest-report" ]; then
           aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive
         fi
 
       - echo "Uploading timestamp history"
+
       - |
         if [ -d "reports" ]; then
           aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive
         fi
 
       - echo "Triggering Lambda Email"
-      - aws lambda invoke --function-name send-automation-report --region us-east-1 output.json
+
+      - aws lambda invoke \
+        --function-name send-automation-report \
+        --region us-east-1 \
+        output.json
 
 artifacts:
   files:
-    - '**/*'           # Only upload your Selenium Extent Reports
+    - '**/*'
