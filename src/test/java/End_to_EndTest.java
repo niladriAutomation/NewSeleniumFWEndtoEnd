@@ -14,7 +14,7 @@ import java.util.List;
 public class End_to_EndTest extends BaseTest {
 
     @Test(dataProvider = "getData")
-    public void  submitOrder(HashMap<String, String> input) throws IOException {
+    public void  submitOrder(HashMap<String, String> input) throws IOException, InterruptedException {
         ProductPage pg = lp.LoginToApplication(input.get("email"), input.get("paswword"));
         ExtentReporterNG.logStep("User logged in", driver);
         String logintitle = driver.getTitle();

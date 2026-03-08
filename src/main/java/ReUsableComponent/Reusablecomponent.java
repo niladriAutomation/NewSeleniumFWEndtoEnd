@@ -38,9 +38,19 @@ public class Reusablecomponent {
         wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
-    public void clickCartButton() {
+    public void clickCartButton() throws InterruptedException {
         waitForPageToLoad();
+        Thread.sleep(8000);
         waitForElementToBeClickable(checkoutbutton);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", checkoutbutton);
+
+        try{
+            checkoutbutton.click();
+        }
+        catch(Exception e){
+
+            ((JavascriptExecutor)driver)
+                    .executeScript("arguments[0].click();", checkoutbutton);
+
+        }
     }
 }

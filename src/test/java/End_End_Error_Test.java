@@ -9,7 +9,7 @@ import java.util.List;
 public class End_End_Error_Test extends BaseTest {
 
     @Test(dataProvider = "getData",retryAnalyzer = Retry.class)
-    public void  submitOrder(HashMap<String, String> input) throws IOException {
+    public void  submitOrder(HashMap<String, String> input) throws IOException, InterruptedException {
         ProductPage pg = lp.LoginToApplication(input.get("email"), input.get("paswword"));
         ExtentReporterNG.logStep("User logged in", driver);
         String logintitle = driver.getTitle();

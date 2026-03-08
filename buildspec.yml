@@ -1,20 +1,16 @@
 version: 0.2
 
 phases:
+
   install:
     runtime-versions:
       java: corretto21
     commands:
       - echo "Installing dependencies"
-      - mvn -version
-
-  pre_build:
-    commands:
-      - echo "Build started on $(date)"
 
   build:
     commands:
-      - echo "Running Selenium tests"
+      - echo "Running Selenium Tests"
       - mvn clean test -Dheadless=true || true
 
   post_build:
@@ -24,10 +20,10 @@ phases:
 
       - echo "Uploading reports if present"
 
-      - if [ -d "latest-report" ]; then aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive --acl public-read; fi
+      - if [ -d "latest-report" ]; then
+        aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive;
+        fi
 
-      - if [ -d "reports" ]; then aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive --acl public-read; fi
-
-artifacts:
-  files:
-    - '**/*'
+      - if [ -d "reports" ]; then
+        aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive;
+        fi
