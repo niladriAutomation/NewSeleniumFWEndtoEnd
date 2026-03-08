@@ -5,7 +5,6 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.openqa.selenium.WebDriver;
 import com.aventstack.extentreports.reporter.configuration.Theme;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -65,24 +64,24 @@ public class ExtentReporterNG {
 
         try {
 
-            File source = new File(getReportPath() + "/index.html");
+            File sourceDir = new File(getReportPath());
 
-            File destination = new File(
-                    System.getProperty("user.dir")
-                            + "/latest-report/index.html"
+            File destinationDir = new File(
+                    System.getProperty("user.dir") + "/latest-report"
             );
 
-            destination.getParentFile().mkdirs();
+            if (destinationDir.exists()) {
+                org.apache.commons.io.FileUtils.deleteDirectory(destinationDir);
+            }
 
-            Files.copy(
-                    source.toPath(),
-                    destination.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING
+            org.apache.commons.io.FileUtils.copyDirectory(
+                    sourceDir,
+                    destinationDir
             );
 
-            System.out.println("Latest report copied for CI pipeline");
+            System.out.println("Latest report folder copied for CI pipeline");
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

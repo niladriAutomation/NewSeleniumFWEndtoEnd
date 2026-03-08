@@ -15,22 +15,25 @@ phases:
 
   post_build:
     commands:
-      - echo "Checking report folders"
-      - ls -la
 
-      - echo "Uploading reports if present"
+      - echo "Checking all folders"
+      - ls -R
+
+      - echo "Uploading latest report"
 
       - |
         if [ -d "latest-report" ]; then
           aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive
         fi
 
+      - echo "Uploading timestamp history"
+
       - |
         if [ -d "reports" ]; then
           aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive
         fi
 
-      - echo "Triggering Lambda Email Notification"
+      - echo "Triggering Lambda Email"
 
       - aws lambda invoke \
         --function-name send-automation-report \
