@@ -19,9 +19,16 @@ phases:
 
   post_build:
     commands:
-      - echo "Uploading Extent Report to S3"
-      - aws s3 cp target/extent-reports/ s3://niladri-selenium-reports-2026/extent-reports/ --recursive
+      - echo "Uploading Latest Extent Report to S3"
+      - aws s3 cp latest-report/ s3://niladri-selenium-reports-2026/extent-reports/latest/ --recursive --acl public-read
+
+      - echo "Uploading Timestamp Reports to S3"
+      - aws s3 cp reports/ s3://niladri-selenium-reports-2026/extent-reports/history/ --recursive --acl public-read
+
+      - echo "Report URL:"
+      - echo "https://niladri-selenium-reports-2026.s3.ap-south-1.amazonaws.com/extent-reports/latest/index.html"
 
 artifacts:
   files:
-    - target/extent-reports/**/*
+    - latest-report/**/*
+    - reports/**/*
